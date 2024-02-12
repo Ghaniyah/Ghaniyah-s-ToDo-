@@ -86,8 +86,21 @@
     new Vue({
       el: '#app',
       store: store,
-      computed: Vuex.mapState(['tasks', 'newTask']),
-      methods: Vuex.mapMutations(['addTask', 'deleteTask']),
+      computed: {
+        ...Vuex.mapState(['tasks', 'newTask'])
+      },
+      data() {
+        return {
+          someTask: '',
+        }
+      },
+      methods: {
+        ...Vuex.mapMutations(['addTask', 'deleteTask']),
+        addANewTask() {
+          this.someTask = ''
+          this.addTask()
+        }
+      },
       template: `
         <div id="todo-container">
           <h2>Ghaniyah's To-Do</h2>
@@ -97,11 +110,16 @@
             <button @click="deleteTask(index)">Delete</button>
           </div>
           <div>
-            <input type="text" v-model="newTask" placeholder="Add a new task">
-            <button @click="addTask">Add</button>
+            <input type="text" v-model="someTask" placeholder="Add a new task">
+            <button @click.prevent="addANewTask">Add</button>
           </div>
         </div>
-      `
+      `,
+      watch: {
+        someTask(newValue) {
+          store.state.newTask = newValue
+        },
+      },
     });
   </script>
 </body>
